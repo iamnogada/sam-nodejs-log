@@ -2,9 +2,7 @@ const winston = require('winston')
 require('winston-daily-rotate-file');
 const path = require('path')
 
-const infoPath = path.join(process.env.LOG_DIR, 'info-%DATE%.log')
-const errorPath = path.join(process.env.LOG_DIR, 'error-%DATE%.log')
-const debugPaugth = path.join(process.env.LOG_DIR, 'debug-%DATE%.log')
+const logfile = path.join(process.env.LOG_DIR, 'log-%DATE%.log')
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL,
@@ -15,18 +13,8 @@ const logger = winston.createLogger({
         // - Write all logs error (and below) to `error.log`.
         //
         new winston.transports.DailyRotateFile({
-            level:'error',
-            filename: errorPath,
-            datePattern:'YYYY-MM-DD'
-        }),
-        new winston.transports.DailyRotateFile({
-            level:'info',
-            filename: infoPath,
-            datePattern:'YYYY-MM-DD'
-        }),
-        new winston.transports.DailyRotateFile({
-            level:'debug',
-            filename: debugPaugth,
+            level:process.env.LOG_LEVEL,
+            filename: logfile,
             datePattern:'YYYY-MM-DD'
         }),
         new winston.transports.Console({
@@ -41,12 +29,17 @@ var consoleError= console.error
 
 function newLog(data) {
     console.log = consoleLog
-    logger.log(process.env.LOG_LEVEL,data)
+    if('debug' != process.env.LOG_LEVEL){
+        console.log(data)
+    }else{
+        logger.log('debug',data)
+    }
+    
     consoleLog = console.log
 }
 function newError(data) {
     console.log = consoleLog
-    console.error = consoleLog
+    console.error = consoleError
     logger.error(data)
     consoleError = console.error
     consoleLog = console.log

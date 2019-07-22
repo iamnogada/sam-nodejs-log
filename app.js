@@ -21,7 +21,7 @@ app.use('/users', usersRouter);
 
 
 console.log("log")
-console.error("erlkjwelrkj")
-console.info("in")
+console.error("error")
+console.info("info")
 
 module.exports = app;
